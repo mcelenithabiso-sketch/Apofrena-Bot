@@ -1,11 +1,11 @@
 import os
+import asyncio
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 TOKEN = os.environ.get("TELEGRAM_TOKEN")
-CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("✅ Apofrena Bot is LIVE!\n\nSend /help to see commands.")
@@ -16,7 +16,6 @@ async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("🟢 Apofrena Bot is running on Render")
 
-# Dummy web server so Render Web Service stays Live
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
@@ -30,6 +29,9 @@ def run_web():
     HTTPServer(("0.0.0.0", port), Handler).serve_forever()
 
 if __name__ == "__main__":
+    # Fix for Python 3.11+ - create event loop BEFORE threading
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
     threading.Thread(target=run_web, daemon=True).start()
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
