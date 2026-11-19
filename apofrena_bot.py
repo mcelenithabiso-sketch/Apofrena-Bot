@@ -1,9 +1,6 @@
 import os
-import asyncio
-import schedule
-import time
 import threading
-from datetime import datetime
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
@@ -11,39 +8,32 @@ TOKEN = os.environ.get("TELEGRAM_TOKEN")
 CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("🤖 Apofrena Bot is LIVE! Send /report for daily report.")
+    await update.message.reply_text("✅ Apofrena Bot is LIVE!\n\nSend /help to see commands.")
 
-async def report(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("📊 APOFRENA DAILY REPORT - 18:00\n\nBot is running ✅\nGold + Forex signals coming soon.\nNext report: Tomorrow 18:00")
+async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("/start - Check bot is live\n/help - Show this help\n/status - Bot status")
 
-async def send_daily_report(app):
-    try:
-        await app.bot.send_message(chat_id=CHAT_ID, text="📊 APOFRENA DAILY REPORT - 18:00\n\nBot is running ✅\nYour 18:00 report is working!\nTomorrow same time.")
-        print("Report sent")
-    except Exception as e:
-        print(f"Error: {e}")
+async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("🟢 Apofrena Bot is running on Render")
 
-def run_schedule(app):
-    schedule.every().day.at("18:00").do(lambda: asyncio.run_coroutine_threadsafe(send_daily_report(app), app.loop))
-    while True:
-        schedule.run_pending()
-        time.sleep(60)
+# Dummy web server so Render Web Service stays Live
+class Handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"Apofrena Bot is running")
+    def log_message(self, *args):
+        pass
 
-async def main():
-    app = ApplicationBuilder().token(TOKEN).build()
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("report", report))
-    
-    # Start scheduler in background
-    threading.Thread(target=run_schedule, args=(app,), daemon=True).start()
-    
-    print("Bot Started")
-    # Send started message
-    try:
-        await app.bot.send_message(chat_id=CHAT_ID, text="🤖 Apofrena Bot Started - Running on Render")
-    except Exception as e:
-        print(e)
-    await app.run_polling()
+def run_web():
+    port = int(os.environ.get("PORT", 10000))
+    HTTPServer(("0.0.0.0", port), Handler).serve_forever()
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    threading.Thread(target=run_web, daemon=True).start()
+    app = ApplicationBuilder().token(TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("help", help_cmd))
+    app.add_handler(CommandHandler("status", status))
+    print("Apofrena Bot starting...")
+    app.run_polling()
