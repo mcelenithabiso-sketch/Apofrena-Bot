@@ -56,8 +56,7 @@ app_bot.add_handler(CommandHandler("help", help_command)update: Update, context:
 print("Apofrena Bot starting...")
 app_bot = ApplicationBuilder().token(TOKEN).build()
 app_bot.add_handler(CommandHandler("start", start))
-app_bot.add_handler(CommandHandler("start", start))
-app_bot.add_handler(CallbackQueryHandler(button_handler))
+app_bot.add_handler(CommandHandler("help", help_cmd))
 app_bot.add_handler(CallbackQueryHandler(button_handler))
 
 bot_thread = threading.Thread(target=run_bot, args=(app_bot,), daemon=True)
