@@ -1,7 +1,7 @@
 import os
 import requests
 from flask import Flask
-from threading import Thread
+import threading
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
