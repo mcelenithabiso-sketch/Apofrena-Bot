@@ -55,7 +55,7 @@ async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 if __name__ == "__main__":
     print("Apofrena Bot starting...")
-    app_bot = Application.builder().token(TOKEN).build()
+    app_bot = ApplicationBuilder().token(TOKEN).build()
     app_bot.add_handler(CommandHandler("start", start))
     app_bot.add_handler(CommandHandler("help", help_cmd))
     app_bot.add_handler(CallbackQueryHandler(button_handler))
