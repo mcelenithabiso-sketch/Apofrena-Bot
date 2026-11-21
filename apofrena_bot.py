@@ -53,11 +53,14 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await start(update, context)
 
+print("Apofrena Bot starting...")
+app_bot = ApplicationBuilder().token(TOKEN).build()
+app_bot.add_handler(CommandHandler("start", start))
+app_bot.add_handler(CommandHandler("help", help_command))
+app_bot.add_handler(CallbackQueryHandler(button_handler))
+
+bot_thread = threading.Thread(target=run_bot, args=(app_bot,), daemon=True)
+bot_thread.start()
+
 if __name__ == "__main__":
-    print("Apofrena Bot starting...")
-    app_bot = ApplicationBuilder().token(TOKEN).build()
-    app_bot.add_handler(CommandHandler("start", start))
-    app_bot.add_handler(CommandHandler("help", help_cmd))
-    app_bot.add_handler(CallbackQueryHandler(button_handler))
-    Thread(target=lambda: app_bot.run_polling(stop_signals=None), daemon=True).start()
-    run_flask()
+    app.run(host="0.0.0.0", port=PORT)
