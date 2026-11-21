@@ -59,5 +59,5 @@ if __name__ == "__main__":
     app_bot.add_handler(CommandHandler("start", start))
     app_bot.add_handler(CommandHandler("help", help_cmd))
     app_bot.add_handler(CallbackQueryHandler(button_handler))
-    Thread(target=app_bot.run_polling, daemon=True).start()
+    Thread(target=lambda: app_bot.run_polling(stop_signals=None), daemon=True).start()
     run_flask()
