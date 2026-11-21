@@ -50,8 +50,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data == "help":
         await query.message.reply_text("/start - Menu\nSend /start anytime to get buttons.")
 
-app_bot.add_handler(CommandHandler("help", help_command)update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await start(update, context)
+
 
 print("Apofrena Bot starting...")
 app_bot = ApplicationBuilder().token(TOKEN).build()
