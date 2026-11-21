@@ -52,16 +52,14 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def help_cmd(update, context):
     await start(update, context)
-def run_bot(app):
-    app.run_polling()
-PORT = int(os.environ.get("PORT", 10000))
-print("Apofrena Bot starting...")
-app_bot = ApplicationBuilder().token(TOKEN).build()
-app_bot.add_handler(CommandHandler("start", start))
-app_bot.add_handler(CommandHandler("help", help_cmd))
-app_bot.add_handler(CallbackQueryHandler(button_handler))
+def run_bot():
+    try:
+        print("Apofrena Bot starting...", flush=True)
+        app_bot.run_polling()
+    except Exception as e:
+        print(f"BOT ERROR: {e}", flush=True)
 
-bot_thread = threading.Thread(target=run_bot, args=(app_bot,), daemon=True)
+bot_thread = threading.Thread(target=run_bot, daemon=True)
 bot_thread.start()
 
 if __name__ == "__main__":
