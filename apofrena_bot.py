@@ -52,6 +52,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def help_cmd(update, context):
     await start(update, context)
+def run_bot(app):
+    app.run_polling()
 
 print("Apofrena Bot starting...")
 app_bot = ApplicationBuilder().token(TOKEN).build()
