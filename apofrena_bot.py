@@ -54,7 +54,7 @@ async def help_cmd(update, context):
     await start(update, context)
 def run_bot(app):
     app.run_polling()
-
+PORT = int(os.environ.get("PORT", 10000))
 print("Apofrena Bot starting...")
 app_bot = ApplicationBuilder().token(TOKEN).build()
 app_bot.add_handler(CommandHandler("start", start))
